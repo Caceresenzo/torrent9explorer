@@ -25,3 +25,13 @@ class Utils:
             print('| {:70} |'.format(object.replace('\t', ' ' * 4)))
 
         print('+' + ("-" * 72) + '+')
+
+    @staticmethod
+    def argument(name, default, min, line):
+        if (name in line):
+            match = re.search(
+                r"^.*?[ \t]+[-]{0,2}" + name + "[ \t:=]+([\d]+)", line, re.MULTILINE)
+
+            if (match != None and len(match.groups()) == 1):
+                return max(1, int(match.group(1)))
+        return default

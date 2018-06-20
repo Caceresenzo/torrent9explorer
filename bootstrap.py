@@ -1,4 +1,4 @@
-from torrent9explorer.explorer import Explorer
+from torrent9explorer import Explorer
 
 app = Explorer()
-app.initialize()
+app.initialize("http://www.torrent9.ec")
