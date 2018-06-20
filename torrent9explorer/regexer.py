@@ -3,6 +3,8 @@ import re
 
 
 class Regexer():
+    
+    CACHE = {}
 
     @staticmethod
     def createItemFromHtml(html):
@@ -13,6 +15,15 @@ class Regexer():
 
         for matchNum, match in enumerate(matches):
             matchNum = matchNum + 1
-            list.append(Torrent9Item(type=match.group(1), url=match.group(2), name=match.group(3), size=match.group(4), seed=match.group(5), leech=match.group(6)))
+
+            url = match.group(2)
+
+            item = Regexer.CACHE.get(url, None)
+
+            if (item == None):
+                item = Torrent9Item(type=match.group(1), url=match.group(2), name=match.group(3), size=match.group(4), seed=match.group(5), leech=match.group(6))
+                Regexer.CACHE[url] = item
+
+            list.append(item)
 
         return list

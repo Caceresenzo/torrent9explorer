@@ -17,6 +17,7 @@ class Terminal(Cmd):
 
         limit = Utils.argument(name="limit", default=1, min=1, line=line)
         stack = Utils.argument(name="stack", default=10, min=1, line=line)
+        cut = Utils.argument(name="cut", default=100, min=1, line=line)
 
         match = re.search(r"^\"(.*?)\"", line, re.MULTILINE)
 
@@ -28,43 +29,79 @@ class Terminal(Cmd):
         query = match.group(1)
 
         print("query: " + query + ", limit: " +
-              str(limit) + ", stack: " + str(stack))
+              str(limit) + ", stack: " + str(stack) + ", cut: " + str(cut))
 
         searcher = Searcher(query=query, limit=limit)
-        Explorer.get().executeSearch(searcher.prepare().getUrls(), stack)
+        Explorer.get().executeSearch(searcher.prepare().getUrls(), stack, cut)
 
     def do_dl(self, line):
-        # download function #
-         ### syntaxe :  downloadlist 105,230,123,(110-120) ###
+        ''' int,int,range-range '''
+
         if (line == None or not line):
             print("Error, suitable argument")
             return
 
-        itemIds = line.split(",")
+        possibleIds = line.split(",")
+        itemIds = []
 
-        for id in itemIds:
+        for id in possibleIds:
             # tester si id contient -
             if ("-" in id):
-                # si il contient:
-                idSplited = (id.split("-"))
-                print(idSplited)
-                idSplitedStartRange = idSplited[0]
-                idSplitedEndRange = idSplited[1]
-                print("Start of range at : " + idSplitedStartRange +
-                      " End of range at : " + idSplitedEndRange)
+                split = str(id).split("-")
 
+                if (Utils.isStringInt(split[0]) and Utils.isStringInt(split[1])):
+                    start = int(split[0])
+                    end = int(split[1])
+
+                    if (start < end):
+                        itemCount = int(0)
+
+                        for itemId in range(start, end + 1):
+                            #print("new id: " + str(itemId))
+                            itemIds.append(itemId)
+                            itemCount = itemCount + 1
+
+                        #print("you want download : " + str(itemCount - 1) + " episodes")
+                    elif (start == end):
+                        itemIds.append(start)
+                    else:
+                        print("Range start can't be bigger than range end")
+                else:
+                    print("Range must be integer-only")
             else:
-                print("caracters not found ")
-            #
-            # si il contient:
-            #      id.splt(-)
-            #       test si string == chiffre
-            #       test si 1er chiffre pas plus grand que 2e
-            #       boucle qui recup tout les chiffre entre ces 2 chiffre
-            #       # rajoter commentaire des que id pret
-            # sinon
-            #       tester si chiffre == nombre
-            #       # rajoter commentaire des que id pret
+                if(Utils.isStringInt(id)):
+                    itemIds.append(int(id))
+                else:
+                    print("Not int")
+
+        for id in itemIds:
+            print("Downloading id: " + str(id))
+
+    def do_help(self, line):
+        output = []
+        output.append("Help message")
+        output.append("")
+        output.append("List of commands and usage:")
+        output.append("*-*")
+        output.append("SEARCHING")
+        output.append("")
+        output.append(
+            "Search command: search \"something\" -limit 20 -stack 60 -cut 150")
+        output.append(
+            "\t-limit [number] is maximum of pages that will be fetch")
+        output.append(
+            "\t-stack [number] is the number of elements to print in a cell ")
+        output.append(
+            "\t-cut [number] will stop printing element if this number is passed ")
+        output.append("")
+        output.append("*-*")
+        output.append("DOWNLOAD LIST")
+        output.append("")
+        output.append("Download command: downloadlist 1,3,4,100-300")
+        output.append("\t1,3,4 allow you to put single item id")
+        output.append("\t100-300 allow you to put ranged-value items ids")
+
+        Utils.printFormat(output)
 
     def do_exit(self, line):
         exit()

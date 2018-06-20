@@ -13,18 +13,18 @@ class Utils:
 
     @staticmethod
     def printFormat(object):
-        print('+' + ("-" * 72) + '+')
+        print('+ ' + ("-" * 102) + ' +')
 
         if isinstance(object, list):
             for string in object:
                 if string == '*-*':
-                    print('+' + ("-" * 72) + '+')
+                    print('+ ' + ("-" * 102) + ' +')
                 else:
-                    print('| {:70} |'.format(string.replace('\t', ' ' * 4)))
+                    print('| {:102} |'.format(string.replace('\t', ' ' * 4)))
         else:
-            print('| {:70} |'.format(object.replace('\t', ' ' * 4)))
+            print('| {:102} |'.format(object.replace('\t', ' ' * 4)))
 
-        print('+' + ("-" * 72) + '+')
+        print('+ ' + ("-" * 102) + ' +')
 
     @staticmethod
     def argument(name, default, min, line):
@@ -35,3 +35,11 @@ class Utils:
             if (match != None and len(match.groups()) == 1):
                 return max(1, int(match.group(1)))
         return default
+
+    @staticmethod
+    def isStringInt(string):
+        try:
+            int(string)
+            return True
+        except ValueError:
+            return False

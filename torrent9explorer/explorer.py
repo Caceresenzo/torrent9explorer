@@ -20,22 +20,23 @@ class Explorer:
         self.terminal = Terminal()
         self.terminal.cmdloop()
 
-    def executeSearch(self, urls, stack):
+    def executeSearch(self, urls, stack, cut):
         from torrent9explorer import Downloader, Regexer
         print("Loading...")
+
+        self.items = []
 
         for url in urls:
             print("Downloading url: " + url)
             html = Downloader(url).getAsString()
             # time.sleep(1)
 
-            Explorer.ITEMS.extend(Regexer.createItemFromHtml(html))
+            self.items.extend(Regexer.createItemFromHtml(html))
 
         progression = 0
-        for item in Explorer.ITEMS:
+        for item in self.items:
 
             if ((progression % stack) == 0):
-                progression = 0
                 print("\n")
                 print(Explorer.LINE_SEPARATOR)
                 print("| {:4} | {:12} | {:50} | {:9} | {:6} | {:6} |".format(
@@ -51,6 +52,12 @@ class Explorer:
             
             if ((progression % stack) == 0): #Next loop
                 print(Explorer.LINE_SEPARATOR)
+
+            if (progression == cut):
+                print("Cut at " + str(cut) + " element(s)")
+                break
+        
+        Explorer.ITEMS.extend(self.items)
 
     @staticmethod
     def get():
