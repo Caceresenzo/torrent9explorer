@@ -29,8 +29,6 @@ class Explorer:
         for url in urls:
             print("Downloading url: " + url)
             html = Downloader(url).getAsString()
-            # time.sleep(1)
-
             self.items.extend(Regexer.createItemFromHtml(html))
 
         progression = 0
@@ -49,14 +47,14 @@ class Explorer:
                     item.getId(), item.getType(), item.getName()[:47] + (item.getName()[47:] and '...'), item.getSize(), item.getSeed(), item.getLeech()))
             except Exception as exception:
                 pass
-            
-            if ((progression % stack) == 0): #Next loop
+
+            if ((progression % stack) == 0):  # Next loop
                 print(Explorer.LINE_SEPARATOR)
 
             if (progression == cut):
                 print("Cut at " + str(cut) + " element(s)")
                 break
-        
+
         Explorer.ITEMS.extend(self.items)
 
     @staticmethod
@@ -83,3 +81,37 @@ class Searcher:
 
     def getUrls(self):
         return self.urls
+
+
+class PageAnalyzer:
+
+    def __init__(self):
+        self.ids = []
+        self.items = []
+
+    def appendId(self, id):
+        if (id not in self.ids):
+            self.ids.append(id)
+
+    def prepare(self):
+        for item in Explorer.ITEMS:
+            if(item.getId() in self.ids):
+                self.items.append(item)
+        return self
+
+    def download(self):
+        from torrent9explorer import Downloader
+
+        for item in self.items:
+            pageContent = Downloader(
+                Explorer.SITE_URL + item.getUrl()).getAsString()
+
+            Utils.safePrint("Analyzing page with id '" +
+                            str(item.getId()) + "' (name: \"" + item.getName() + "\")")
+            item.setPageContent(pageContent)
+
+            if (Utils.is_empty(pageContent) or pageContent == None):
+                continue
+            else:
+                pass
+                # on va faire le regex

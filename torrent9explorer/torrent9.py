@@ -12,6 +12,7 @@ class Torrent9Item():
         self.size = size
         self.seed = seed
         self.leech = leech
+        self.pageContent = ""
 
     def getId(self):
         return self.id
@@ -20,7 +21,7 @@ class Torrent9Item():
         return self.type
 
     def getUrl(self):
-        return self.type
+        return self.url
 
     def getName(self):
         return self.name
@@ -33,6 +34,12 @@ class Torrent9Item():
 
     def getLeech(self):
         return self.leech
+
+    def getPageContent(self):
+        return self.pageContent
+
+    def setPageContent(self, content):
+        self.pageContent = content
     
     @staticmethod
     def incrementId():

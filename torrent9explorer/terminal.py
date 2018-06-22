@@ -35,14 +35,16 @@ class Terminal(Cmd):
         Explorer.get().executeSearch(searcher.prepare().getUrls(), stack, cut)
 
     def do_dl(self, line):
+        from torrent9explorer import PageAnalyzer
         ''' int,int,range-range '''
 
         if (line == None or not line):
             print("Error, suitable argument")
             return
 
+        pageAnalyzer = PageAnalyzer()
+
         possibleIds = line.split(",")
-        itemIds = []
 
         for id in possibleIds:
             # tester si id contient -
@@ -58,24 +60,23 @@ class Terminal(Cmd):
 
                         for itemId in range(start, end + 1):
                             #print("new id: " + str(itemId))
-                            itemIds.append(itemId)
+                            pageAnalyzer.appendId(itemId)
                             itemCount = itemCount + 1
 
                         #print("you want download : " + str(itemCount - 1) + " episodes")
                     elif (start == end):
-                        itemIds.append(start)
+                        pageAnalyzer.appendId(start)
                     else:
                         print("Range start can't be bigger than range end")
                 else:
                     print("Range must be integer-only")
             else:
                 if(Utils.isStringInt(id)):
-                    itemIds.append(int(id))
+                    pageAnalyzer.appendId(int(id))
                 else:
                     print("Not int")
-
-        for id in itemIds:
-            print("Downloading id: " + str(id))
+        
+        pageAnalyzer.prepare().download()
 
     def do_help(self, line):
         output = []

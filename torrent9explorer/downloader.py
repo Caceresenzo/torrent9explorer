@@ -1,9 +1,10 @@
 import urllib.request
 import re
+import unicodedata
 
 
 class Downloader:
-
+    
     def __init__(self, url):
         self.url = url
 
@@ -11,8 +12,11 @@ class Downloader:
         pass  # TODO
 
     def getAsString(self):
-        socket = urllib.request.urlopen(self.url)
-        data = socket.read()
-        socket.close()
+        try:
+            socket = urllib.request.urlopen(self.url)
+            data = socket.read()
+            socket.close()
 
-        return data.decode("utf8")
+            return data.decode("utf8")
+        except Exception as exception:
+            return str(exception)

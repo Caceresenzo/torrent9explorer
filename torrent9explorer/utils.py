@@ -1,5 +1,6 @@
 import re
 import unicodedata
+import sys
 
 
 class Utils:
@@ -20,11 +21,23 @@ class Utils:
                 if string == '*-*':
                     print('+ ' + ("-" * 102) + ' +')
                 else:
-                    print('| {:102} |'.format(string.replace('\t', ' ' * 4)))
+                    Utils.safePrint('| {:102} |'.format(
+                        string.replace('\t', ' ' * 4)))
         else:
-            print('| {:102} |'.format(object.replace('\t', ' ' * 4)))
+            Utils.safePrint('| {:102} |'.format(object.replace('\t', ' ' * 4)))
 
         print('+ ' + ("-" * 102) + ' +')
+
+    @staticmethod
+    def safePrint(object):
+        print(object, file=sys.stderr)
+
+    @staticmethod
+    def is_empty(object):
+        if object:
+            return False
+        else:
+            return True
 
     @staticmethod
     def argument(name, default, min, line):
