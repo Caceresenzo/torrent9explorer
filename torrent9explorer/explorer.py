@@ -1,4 +1,4 @@
-from torrent9explorer import Utils
+from torrent9explorer import Utils 
 from threading import Thread
 import time
 
@@ -100,18 +100,26 @@ class PageAnalyzer:
         return self
 
     def download(self):
-        from torrent9explorer import Downloader
+        from torrent9explorer import Downloader, Regexer
 
         for item in self.items:
             pageContent = Downloader(
                 Explorer.SITE_URL + item.getUrl()).getAsString()
 
-            Utils.safePrint("Analyzing page with id '" +
-                            str(item.getId()) + "' (name: \"" + item.getName() + "\")")
+            Utils.safePrint("Analyzing page with id '" + str(item.getId()) + "' (name: \"" + item.getName() + "\")")             
             item.setPageContent(pageContent)
 
             if (Utils.is_empty(pageContent) or pageContent == None):
                 continue
             else:
-                pass
-                # on va faire le regex
+                filePath = Regexer.extractDownloadLinkFromHtml(pageContent)
+                
+                if (filePath == None):
+                    print("No downloadable button found at this page...")
+                    continue
+                
+                url = Explorer.SITE_URL + filePath
+                try:
+                    Downloader(url).downloadFile(item.getName() + ".torrent")
+                except Exception as exception:
+                    print("Failed to download file \"" + item.getName() + "\", error: " + str(exception))

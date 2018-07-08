@@ -14,6 +14,15 @@ class Torrent9Item():
         self.leech = leech
         self.pageContent = ""
 
+        switcher = {
+            "desktop": "Series",
+            "video-camera": "Movie",
+            "music": "Music",
+            "book": "eBook",
+        }
+        
+        self.type = switcher.get(type, "--:" + type)
+
     def getId(self):
         return self.id
 
